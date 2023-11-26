@@ -1,7 +1,9 @@
+import { Movie } from '../../movies/entities/movie.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -19,6 +21,9 @@ export class User {
 
   @Column({ nullable: false })
   password: string;
+
+  @OneToMany(() => Movie, (movie) => movie.user)
+  movies: Movie[];
 
   @CreateDateColumn()
   created_at: Date;

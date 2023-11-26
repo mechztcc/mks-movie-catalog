@@ -1,7 +1,9 @@
+import { User } from '../../users/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -25,6 +27,9 @@ export class Movie {
 
   @Column({ nullable: false })
   duration: string;
+
+  @ManyToOne(() => User, (user) => user.movies)
+  user: User;
 
   @CreateDateColumn()
   created_at: Date;
