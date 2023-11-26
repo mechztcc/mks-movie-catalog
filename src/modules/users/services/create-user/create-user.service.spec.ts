@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CreateUserService } from './create-user.service';
+import { CreateUserDto } from '../../dto/create-user.dto';
 
 describe('CreateUserService', () => {
   let service: CreateUserService;
@@ -15,4 +16,6 @@ describe('CreateUserService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
+
+  
 });

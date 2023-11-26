@@ -13,8 +13,6 @@ export class CreateUserService {
   ) {}
 
   async execute({ email, name, password }: CreateUserDto): Promise<any> {
-    console.log(email);
-
     const userExists = await this.usersRepository.findOne({ where: { email } });
     if (userExists) {
       throw new BadRequestException('Provided email is already in use.');
