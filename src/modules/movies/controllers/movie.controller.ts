@@ -24,6 +24,7 @@ import {
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -54,6 +55,11 @@ export class MovieController {
   }
 
   @Get()
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Page params to filter results',
+  })
   @ApiResponse({ status: 200, description: 'The request has succedeed' })
   @UseInterceptors(AuthorizationInterceptor)
   async index(@Headers() headers, @Query() query) {

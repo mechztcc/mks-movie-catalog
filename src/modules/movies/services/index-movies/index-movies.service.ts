@@ -29,7 +29,7 @@ export class IndexMoviesService {
     });
 
     const totalItems = await this.moviesRepository.count();
-    const totalPages = Number((totalItems / 10).toFixed(0));
+    const totalPages = Math.round(Number((totalItems / 10)));
 
     const pagination = {
       data: movies,
