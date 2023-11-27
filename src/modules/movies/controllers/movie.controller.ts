@@ -17,7 +17,19 @@ import { FindByUserService } from '../services/find-by-user/find-by-user.service
 import { DeleteMovieService } from '../services/delete-movie/delete-movie.service';
 import { UpdateMovieService } from '../services/update-movie/update-movie.service';
 import { UpdateMovieDto } from '../dto/update-movie.dto';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
+@ApiTags('movies')
+@ApiBearerAuth()
 @Controller('movie')
 export class MovieController {
   constructor(
@@ -29,6 +41,7 @@ export class MovieController {
   ) {}
 
   @Post()
+  @ApiCreatedResponse({ description: 'Movie has been created' })
   @UseInterceptors(AuthorizationInterceptor)
   async store(@Body() payload: CreateMovieDto, @Headers() headers) {
     const { id } = headers.user;
@@ -40,12 +53,25 @@ export class MovieController {
   }
 
   @Get()
+  @ApiResponse({ status: 200, description: 'The request has succedeed' })
   @UseInterceptors(AuthorizationInterceptor)
   async index(@Headers() headers) {
     return await this.indexMoviesService.execute();
   }
 
   @Delete('/:id')
+  @ApiParam({ name: 'id', required: true, description: 'The record identifier'})
+  @ApiResponse({ status: 200, description: 'The request has succedeed' })
+  @ApiNotFoundResponse({
+    description: 'Provided movie, or Provided user has not found.',
+  })
+  @ApiUnauthorizedResponse({
+    description:
+      'The logged in user does not have permission to delete this record',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'The provided movieId, its invalid',
+  })
   @UseInterceptors(AuthorizationInterceptor)
   async delete(@Headers() headers, @Param('id') id: string) {
     const { user } = headers;
@@ -57,6 +83,12 @@ export class MovieController {
 
   @Put()
   @UseInterceptors(AuthorizationInterceptor)
+  @ApiNotFoundResponse({ description: 'The provided movie id has not found' })
+  @ApiNotFoundResponse({ description: 'The provided user has not found' })
+  @ApiUnauthorizedResponse({
+    description: 'Only the owner of movie, can update records',
+  })
+  @ApiResponse({ status: 200, description: 'The record has been updated' })
   async update(@Headers() headers, @Body() payload: UpdateMovieDto) {
     const { user } = headers;
     return await this.updateMovieService.execute({
@@ -66,6 +98,8 @@ export class MovieController {
   }
 
   @Get('me')
+  @ApiNotFoundResponse({ description: 'The provided user has not found' })
+  @ApiResponse({ status: 200, description: 'All records are listed by owner' })
   @UseInterceptors(AuthorizationInterceptor)
   async findByUser(@Headers() headers) {
     const { id } = headers.user;
