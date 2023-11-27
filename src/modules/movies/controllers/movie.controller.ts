@@ -6,6 +6,7 @@ import {
   Headers,
   Param,
   Post,
+  Put,
   UseInterceptors,
 } from '@nestjs/common';
 import { AuthorizationInterceptor } from 'src/shared/interceptors/authorization/authorization.interceptor';
@@ -14,6 +15,8 @@ import { CreateMovieService } from '../services/create-movie/create-movie.servic
 import { IndexMoviesService } from '../services/index-movies/index-movies.service';
 import { FindByUserService } from '../services/find-by-user/find-by-user.service';
 import { DeleteMovieService } from '../services/delete-movie/delete-movie.service';
+import { UpdateMovieService } from '../services/update-movie/update-movie.service';
+import { UpdateMovieDto } from '../dto/update-movie.dto';
 
 @Controller('movie')
 export class MovieController {
@@ -22,6 +25,7 @@ export class MovieController {
     private readonly indexMoviesService: IndexMoviesService,
     private readonly findByUserService: FindByUserService,
     private readonly deleteMovieService: DeleteMovieService,
+    private readonly updateMovieService: UpdateMovieService,
   ) {}
 
   @Post()
@@ -47,6 +51,16 @@ export class MovieController {
     const { user } = headers;
     return await this.deleteMovieService.execute({
       movieId: Number(id),
+      userId: Number(user.id),
+    });
+  }
+
+  @Put()
+  @UseInterceptors(AuthorizationInterceptor)
+  async update(@Headers() headers, @Body() payload: UpdateMovieDto) {
+    const { user } = headers;
+    return await this.updateMovieService.execute({
+      data: payload,
       userId: Number(user.id),
     });
   }

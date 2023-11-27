@@ -3,18 +3,19 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Movie } from '../../entities/movie.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from 'src/modules/users/entities/user.entity';
+import { UpdateMovieDto } from '../../dto/update-movie.dto';
 
 interface IRequest {
-  movieId: number;
+  data: UpdateMovieDto;
   userId: number;
 }
 
 @Injectable()
-export class DeleteMovieService {
+export class UpdateMovieService {
   constructor(
     @InjectRepository(Movie)
     private moviesRepository: Repository<Movie>,
@@ -22,9 +23,9 @@ export class DeleteMovieService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async execute({ movieId, userId }: IRequest): Promise<any> {
+  async execute({ data, userId }: IRequest): Promise<any> {
     const movieExists = await this.moviesRepository.findOne({
-      where: { id: movieId },
+      where: { id: data.id },
       relations: { user: true },
     });
 
@@ -46,10 +47,12 @@ export class DeleteMovieService {
       );
     }
 
-    await this.moviesRepository.delete({ id: movieId });
+    movieExists.name = data.name;
+    movieExists.age = data.age;
+    movieExists.description = data.description;
+    movieExists.release = data.release;
+    movieExists.duration = data.duration;
 
-    return {
-      message: 'Movie deleted with success',
-    };
+    return await this.moviesRepository.save(movieExists);
   }
 }
