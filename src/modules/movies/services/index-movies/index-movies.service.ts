@@ -16,11 +16,12 @@ export class IndexMoviesService {
   async execute(): Promise<any> {
     const moviesExists = await this.cacheService.get('movies');
     if (moviesExists) {
-      console.log('GETTING FROM REDIS');
       return moviesExists;
     }
 
     const movies = await this.moviesRepository.find();
+
+    await this.cacheService.set('movies', movies);
 
     return movies;
   }

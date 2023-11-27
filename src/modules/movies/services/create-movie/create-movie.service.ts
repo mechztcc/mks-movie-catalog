@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Cache } from 'cache-manager';
 import { Repository } from 'typeorm';
-import { Movie } from '../../entities/movie.entity';
 import { CreateMovieDto } from '../../dto/create-movie.dto';
+import { Movie } from '../../entities/movie.entity';
 
 interface IRequest {
   data: CreateMovieDto;
@@ -14,6 +16,7 @@ export class CreateMovieService {
   constructor(
     @InjectRepository(Movie)
     private moviesRepository: Repository<Movie>,
+    @Inject(CACHE_MANAGER) private cacheService: Cache,
   ) {}
 
   async execute({ data, userId }: IRequest): Promise<any> {
@@ -25,6 +28,8 @@ export class CreateMovieService {
       release: data.release,
       user: { id: userId },
     });
+
+    await this.cacheService.del('movies');
 
     return await this.moviesRepository.save(movie);
   }

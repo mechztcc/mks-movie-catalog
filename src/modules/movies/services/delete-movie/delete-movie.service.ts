@@ -1,4 +1,5 @@
 import {
+  Inject,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -7,6 +8,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Movie } from '../../entities/movie.entity';
 import { Repository } from 'typeorm';
 import { User } from 'src/modules/users/entities/user.entity';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 interface IRequest {
   movieId: number;
@@ -20,6 +23,7 @@ export class DeleteMovieService {
     private moviesRepository: Repository<Movie>,
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @Inject(CACHE_MANAGER) private cacheService: Cache,
   ) {}
 
   async execute({ movieId, userId }: IRequest): Promise<any> {
@@ -47,6 +51,8 @@ export class DeleteMovieService {
     }
 
     await this.moviesRepository.delete({ id: movieId });
+
+    await this.cacheService.del('movies');
 
     return {
       message: 'Movie deleted with success',
