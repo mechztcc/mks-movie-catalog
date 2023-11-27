@@ -6,10 +6,11 @@ import { MovieController } from './controllers/movie.controller';
 import { CreateMovieService } from './services/create-movie/create-movie.service';
 import { IndexMoviesService } from './services/index-movies/index-movies.service';
 import { FindByUserService } from './services/find-by-user/find-by-user.service';
+import { DeleteMovieService } from './services/delete-movie/delete-movie.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, Movie])],
   controllers: [MovieController],
-  providers: [CreateMovieService, IndexMoviesService, FindByUserService],
+  providers: [CreateMovieService, IndexMoviesService, FindByUserService, DeleteMovieService],
 })
 export class MoviesModule {}
