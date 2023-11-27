@@ -1,4 +1,6 @@
+import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
+import { TypeOrmSQLITETestingModule } from '../../../../../test/test-utils/sqlite.module';
 import { CreateSessionService } from './create-session.service';
 
 describe('CreateSessionService', () => {
@@ -6,7 +8,8 @@ describe('CreateSessionService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [CreateSessionService],
+      imports: [...TypeOrmSQLITETestingModule()],
+      providers: [CreateSessionService, JwtService],
     }).compile();
 
     service = module.get<CreateSessionService>(CreateSessionService);

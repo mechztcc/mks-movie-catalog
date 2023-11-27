@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Movie } from '../../entities/movie.entity';
 import { Repository } from 'typeorm';
-import { User } from 'src/modules/users/entities/user.entity';
+import { User } from '../../../users/entities/user.entity';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 

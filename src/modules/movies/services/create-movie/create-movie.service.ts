@@ -5,7 +5,7 @@ import { Cache } from 'cache-manager';
 import { Repository } from 'typeorm';
 import { CreateMovieDto } from '../../dto/create-movie.dto';
 import { Movie } from '../../entities/movie.entity';
-import { User } from 'src/modules/users/entities/user.entity';
+import { User } from '../../../users/entities/user.entity';
 
 interface IRequest {
   data: CreateMovieDto;
