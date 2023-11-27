@@ -1,4 +1,5 @@
 import {
+  Inject,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -8,6 +9,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from 'src/modules/users/entities/user.entity';
 import { UpdateMovieDto } from '../../dto/update-movie.dto';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 interface IRequest {
   data: UpdateMovieDto;
@@ -21,6 +24,7 @@ export class UpdateMovieService {
     private moviesRepository: Repository<Movie>,
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @Inject(CACHE_MANAGER) private cacheService: Cache,
   ) {}
 
   async execute({ data, userId }: IRequest): Promise<any> {
@@ -53,6 +57,8 @@ export class UpdateMovieService {
     movieExists.release = data.release;
     movieExists.duration = data.duration;
 
-    return await this.moviesRepository.save(movieExists);
+    const response = await this.moviesRepository.save(movieExists);
+    this.cacheService.reset();
+    return response;
   }
 }

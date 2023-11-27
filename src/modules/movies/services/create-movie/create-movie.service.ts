@@ -29,7 +29,7 @@ export class CreateMovieService {
       user: { id: userId },
     });
 
-    await this.cacheService.del('movies');
+    await this.cacheService.reset();
 
     return await this.moviesRepository.save(movie);
   }

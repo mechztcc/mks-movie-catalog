@@ -5,6 +5,10 @@ import { Cache } from 'cache-manager';
 import { Repository } from 'typeorm';
 import { Movie } from '../../entities/movie.entity';
 
+interface IRequest {
+  page: number;
+}
+
 @Injectable()
 export class IndexMoviesService {
   constructor(
@@ -13,16 +17,32 @@ export class IndexMoviesService {
     @Inject(CACHE_MANAGER) private cacheService: Cache,
   ) {}
 
-  async execute(): Promise<any> {
-    const moviesExists = await this.cacheService.get('movies');
+  async execute({ page = 1 }: IRequest): Promise<any> {
+    const moviesExists = await this.cacheService.get(`movies-page-${page}`);
     if (moviesExists) {
       return moviesExists;
     }
 
-    const movies = await this.moviesRepository.find();
+    const movies = await this.moviesRepository.find({
+      take: 10,
+      skip: page * 10 - 10,
+    });
 
-    await this.cacheService.set('movies', movies);
+    const totalItems = await this.moviesRepository.count();
+    const totalPages = Number((totalItems / 10).toFixed(0));
 
-    return movies;
+    const pagination = {
+      data: movies,
+      totalItems: totalItems,
+      itemsPerPage: 10,
+      totalPages: totalPages,
+      previus: page - 1 !== 0 ? page - 1 : null,
+    };
+
+    if (pagination.data.length > 0) {
+      await this.cacheService.set(`movies-page-${page}`, pagination);
+    }
+
+    return pagination;
   }
 }

@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseInterceptors,
 } from '@nestjs/common';
 import { AuthorizationInterceptor } from 'src/shared/interceptors/authorization/authorization.interceptor';
@@ -55,12 +56,21 @@ export class MovieController {
   @Get()
   @ApiResponse({ status: 200, description: 'The request has succedeed' })
   @UseInterceptors(AuthorizationInterceptor)
-  async index(@Headers() headers) {
-    return await this.indexMoviesService.execute();
+  async index(@Headers() headers, @Query() query) {
+    const params = {
+      page: query['page'] ?? 1,
+    };
+    return await this.indexMoviesService.execute({
+      page: params.page,
+    });
   }
 
   @Delete('/:id')
-  @ApiParam({ name: 'id', required: true, description: 'The record identifier'})
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'The record identifier',
+  })
   @ApiResponse({ status: 200, description: 'The request has succedeed' })
   @ApiNotFoundResponse({
     description: 'Provided movie, or Provided user has not found.',

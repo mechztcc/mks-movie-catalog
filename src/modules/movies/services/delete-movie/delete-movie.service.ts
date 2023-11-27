@@ -52,7 +52,7 @@ export class DeleteMovieService {
 
     await this.moviesRepository.delete({ id: movieId });
 
-    await this.cacheService.del('movies');
+    await this.cacheService.reset();
 
     return {
       message: 'Movie deleted with success',
