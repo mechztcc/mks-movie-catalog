@@ -7,28 +7,12 @@ services:
     volumes:
       - .:/home/node/app
     network_mode: 'host'
-    depends_on:
-      - db
-
-  db:
-    image: postgres
-    container_name: pg-docker
-    restart: always
-    environment:
-      - POSTGRES_USER=docker
-      - POSTGRES_PASSWORD=docker
-    ports:
-      - '5432:5432'
-
-    volumes:
-      - ./.docker/dbdata:/data/db
-      - ./.docker/postgres:/docker-entrypoint-initdb.d
 
   redis:
     image: redis:latest
     restart: always
     ports:
-      - "6379:6379"
+      - '6379:6379'
     volumes:
       - ./.docker/redis/data:/root/redis
       - ./.docker/redis/redis.conf:/usr/local/etc/redis/redis.conf
@@ -36,5 +20,3 @@ services:
       - REDIS_PASSWORD=redis
       - REDIS_PORT=6379
       - REDIS_DATABASES=16
-    depends_on:
-      - db
