@@ -1,6 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
 
-export class CreateUserDto {
+export class CreateMovieDto {
   @IsNotEmpty()
   name: string;
 
@@ -11,7 +11,7 @@ export class CreateUserDto {
   age: number;
 
   @IsNotEmpty()
-  release: number;
+  release: string;
 
   @IsNotEmpty()
   duration: string;
